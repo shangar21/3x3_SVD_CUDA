@@ -1,2 +1,89 @@
 
 \.vs/
+# Ignore build directories and files
+build/
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.so
+*.dll
+*.dylib
+*.bin
+*.dSYM/
+*.log
+
+# Ignore CUDA build files
+*.cu.o
+*.cu.obj
+*.ptx
+*.cubin
+*.fatbin
+*.cudafe*
+*.cubin
+*.fatbin
+*.nvvm
+*.gch
+*.cmake
+
+# Ignore text files
+*.txt
+
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+
+# Ignore temporary files
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Ignore VSCode settings and extensions
+.vscode/
+
+# Ignore macOS specific files
+.DS_Store
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore environment files
+.env
+.venv/
+env/
+venv/
+
+# Ignore output directories for C/C++ builds
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CMakeLists.txt.user
+*.ninja
+.ninja_log
+.ninja_deps
+
+# Ignore Python virtual environment
+venv/
+
+# Ignore system-specific files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Ignore Visual Studio Code settings folder
+.vscode/
+
+# Ignore JetBrains IDE settings folder
+.idea/
+
+# Ignore Xcode project files
+*.xcodeproj/
+*.xcworkspace/
+
