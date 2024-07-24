@@ -32,5 +32,6 @@
 #define gfour_gamma_squared		5.8284273147583007813f
 
 union un { float f; unsigned int ui; };
-void launch_svd_kernel(float* input, float* u, float*s, float* v);
+void launch_svd_kernel(float* input, float* u, float* s, float* v);
+void launch_svd_kernel_batch(float* input, float* u, float* s, float* v, int batch_size);
 #endif

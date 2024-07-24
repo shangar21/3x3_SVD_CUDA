@@ -16,7 +16,9 @@ std::vector<torch::Tensor> svd_cuda(torch::Tensor input) {
     float* s_ptr = s.data_ptr<float>();
     float* v_ptr = v.data_ptr<float>();
 
-    launch_svd_kernel(input_ptr, u_ptr, s_ptr, v_ptr);
+	int batch_size = input.size(0);
+
+    launch_svd_kernel_batch(input_ptr, u_ptr, s_ptr, v_ptr, batch_size);
     cudaDeviceSynchronize();
 
     return {u, s, v};
