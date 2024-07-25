@@ -1020,16 +1020,16 @@ __global__ void svd_kernel(float* input, float* u, float* s, float* v) {
 
 __global__ void svd_kernel_batch(float* input, float* u, float* s, float* v, int batch_size){
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	if(idx < batch_size){
-		float* in = input + (idx * 9);
-		float* u_out = u + (idx * 9);
-		float* s_out = s + (idx * 9);
-		float* v_out = v + (idx * 9);
-		svd(in[0], in[1], in[2], in[3], in[4], in[5], in[6], in[7], in[8],
-        u_out[0], u_out[1], u_out[2], u_out[3], u_out[4], u_out[5], u_out[6], u_out[7], u_out[8],
-        s_out[0], s_out[1], s_out[2],
-        v_out[0], v_out[1], v_out[2], v_out[3], v_out[4], v_out[5], v_out[6], v_out[7], v_out[8]);
-	}
+    if (idx < batch_size) {
+        const float* in = input + idx * 9;
+        float* u_out = u + idx * 9;
+        float* s_out = s + idx * 3;
+        float* v_out = v + idx * 9;
+        svd(in[0], in[1], in[2], in[3], in[4], in[5], in[6], in[7], in[8],
+            u_out[0], u_out[1], u_out[2], u_out[3], u_out[4], u_out[5], u_out[6], u_out[7], u_out[8],
+            s_out[0], s_out[1], s_out[2],
+            v_out[0], v_out[1], v_out[2], v_out[3], v_out[4], v_out[5], v_out[6], v_out[7], v_out[8]);
+    }
 }
 
 void launch_svd_kernel(float* input, float* u, float* s, float* v) {
@@ -1038,8 +1038,7 @@ void launch_svd_kernel(float* input, float* u, float* s, float* v) {
 }
 
 void launch_svd_kernel_batch(float* input, float* u, float* s, float* v, int batch_size){
-	int threads = 256;
-	int blocks = (batch_size + threads - 1) / threads;
-	svd_kernel_batch<<<blocks, threads>>>(input, u, s, v, batch_size);
-	cudaDeviceSynchronize();
-}
+	int threads_per_block = 256;
+    int num_blocks = (batch_size + threads_per_block - 1) / threads_per_block;
+    svd_kernel_batch<<<num_blocks, threads_per_block>>>(input, u, s, v, batch_size);
+    cudaDeviceSynchronize();}

@@ -7,19 +7,17 @@
 // Wrapper for launching the kernel
 std::vector<torch::Tensor> svd_cuda(torch::Tensor input) {
     auto options = torch::TensorOptions().dtype(torch::kFloat32).device(input.device());
-    auto u = torch::zeros({3, 3}, options);
-    auto s = torch::zeros({3}, options);
-    auto v = torch::zeros({3, 3}, options);
+	int batch_size = input.size(0);
+    auto u = torch::zeros({batch_size, 3, 3}, options);
+    auto s = torch::zeros({batch_size, 3}, options);
+    auto v = torch::zeros({batch_size, 3, 3}, options);
 
     float* input_ptr = input.data_ptr<float>();
     float* u_ptr = u.data_ptr<float>();
     float* s_ptr = s.data_ptr<float>();
     float* v_ptr = v.data_ptr<float>();
 
-	int batch_size = input.size(0);
-
     launch_svd_kernel_batch(input_ptr, u_ptr, s_ptr, v_ptr, batch_size);
-    cudaDeviceSynchronize();
 
     return {u, s, v};
 }
