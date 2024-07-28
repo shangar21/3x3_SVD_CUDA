@@ -70,33 +70,67 @@ def test_svd(U, S, V, original_matrices):
     orthogonality_diff_v = torch.sum(torch.abs(identity_v - identity_matrix))
     
     total_orthogonality_diff = orthogonality_diff_u + orthogonality_diff_v
-    return reconstruction_diff.item(), total_orthogonality_diff.item() 
+    return reconstruction_diff.item(), total_orthogonality_diff.item(), reconstructed_matrices 
+
+def find_max_error_matrix(original_matrices, reconstructed_matrices):
+    """
+    Finds the matrix with the largest error between the original and reconstructed matrices.
+    
+    Args:
+        original_matrices (torch.Tensor): A tensor of shape (N, 3, 3) containing the original matrices.
+        reconstructed_matrices (torch.Tensor): A tensor of shape (N, 3, 3) containing the reconstructed matrices.
+        
+    Returns:
+        tuple: The index of the matrix with the largest error and the maximum error value.
+    """
+    # Calculate the error for each matrix
+    errors = torch.norm(original_matrices - reconstructed_matrices, dim=(1, 2))
+    
+    # Find the index of the matrix with the largest error
+    max_error_index = torch.argmax(errors).item()
+    max_error_value = errors[max_error_index].item()
+    
+    return max_error_index, max_error_value
 
 def main():
     # Example batch size
-    N = 2
+    N = 20_000
     # Define a batch of input matrices (N x 3 x 3)
     original_matrices = torch.tensor([
+        [
+            [9.0, 8.0, 7.0],
+            [6.0, 5.0, 4.0],
+            [3.0, 2.0, 1.0]
+        ],
         [
             [1.0, 2.0, 3.0],
             [4.0, 5.0, 6.0],
             [7.0, 8.0, 9.0]
         ],
+        
         [
-            [9.0, 8.0, 7.0],
-            [6.0, 5.0, 4.0],
-            [3.0, 2.0, 1.0]
+            [1.1, 2.1, 3.1],
+            [4.2, 5.2, 6.2],
+            [7.3, 8.3, 9.3]
         ]
     ], dtype=torch.float32).cuda()
 
+    original_matrices = torch.randn(N, 3, 3).cuda()
+
+
     # Perform batch SVD
     U, S, V = batch_svd(original_matrices)
+    torch.cuda.synchronize()
 
     # Test the SVD results
-    reconstruction_diff, orthogonality_diff = test_svd(U, S, V, original_matrices)
-    
+    reconstruction_diff, orthogonality_diff, reconstructed_matrices = test_svd(U, S, V, original_matrices)
+    max_error_index, max_error_value = find_max_error_matrix(original_matrices, reconstructed_matrices)
+    print("MATRICES WITH MAX ERROR")
+    print(original_matrices[max_error_index])
+    print(reconstructed_matrices[max_error_index])
     print(f"Reconstruction difference sum: {reconstruction_diff}")
     print(f"Orthogonality difference sum: {orthogonality_diff}")
+
 
 if __name__ == "__main__":
     main()
